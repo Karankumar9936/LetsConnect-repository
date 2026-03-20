@@ -7,12 +7,6 @@ const cors = require('cors');
 require('dotenv').config();
 const sequelize = require('./config/db.config');
 
-app.use(cors({
-    origin: '*', 
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
 
 const Message = require('./models/message'); 
 const authRoutes = require('./routes/auth.routes');
