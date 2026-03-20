@@ -1,6 +1,9 @@
  // --- 1. CONFIGURATION ---
-const API_BASE_URL = 'http://localhost:5000/api';
-const socket = io("http://localhost:5000"); 
+// const API_BASE_URL = 'http://localhost:5000/api';
+// const socket = io("http://localhost:5000"); 
+// cloud url
+const API_BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
+const socket = io(import.meta.env.VITE_API_URL);
 
 let currentCampaignId = null; 
 let activeRoomId = null; 
