@@ -7,6 +7,13 @@ const cors = require('cors');
 require('dotenv').config();
 const sequelize = require('./config/db.config');
 
+app.use(cors({
+    origin: '*', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+
 const Message = require('./models/message'); 
 const authRoutes = require('./routes/auth.routes');
 const profileRoutes = require('./routes/profile.routes');
@@ -23,7 +30,7 @@ const server = http.createServer(app);
 // --- 2. SOCKET.IO SETUP ---
 const io = new Server(server, {
     cors: {
-        origin: "http://127.0.0.1:5500", // Ensure this matches your frontend Live Server URL
+        origin: "https://letsconnect99.netlify.app", //"http://127.0.0.1:5500", // Ensure this matches your frontend Live Server URL
         methods: ["GET", "POST"]
     }
 });
