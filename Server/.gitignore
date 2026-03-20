@@ -1,0 +1,33 @@
+# Credentials and Environment Variables
+.env
+
+# Dependencies
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Build directories
+dist/
+build/
+.cache/
+
+# Coverage reports 
+coverage/
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Database / Local data
+*.sqlite
+dump.rdb
+
+# Frontend specific 
+.eslintcache

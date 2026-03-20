@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Let's Connect | Influencer & Brand Collaboration</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="js/script.js" defer></script>
+  </head>
+  <body>
+    <nav>
+      <div class="logo" onclick="handleLogoClick()">
+        <i data-lucide="zap"></i> Let's Connect
+      </div>
+
+      <div class="nav-links" id="guest-nav">
+        <a onclick="showView('landing')">Home</a>
+        <a onclick="showView('login')">Influencers</a>
+        <a onclick="showView('login')">Brands</a>
+        <button class="btn btn-outline" onclick="showView('login')">
+          Login
+        </button>
+        <button class="btn btn-primary" onclick="showView('signup')">
+          Sign Up
+        </button>
+      </div>
+
+      <div class="nav-links" id="user-nav" style="display: none">
+        <span id="nav-user-name" class="nav-user-display"></span>
+        <button class="btn btn-outline" onclick="logout()">Logout</button>
+      </div>
+    </nav>
+
+    <div id="landing-view" class="view active">
+      <section class="hero">
+        <h1>Connect. <span>Collab.</span> Create.</h1>
+        <p>
+          An E-Commerce platform for Nano & Micro-influencers to collaborate
+          with Brands through structured campaigns.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="showView('signup')">
+            I am an Influencer
+          </button>
+          <button class="btn btn-outline" onclick="showView('signup')">
+            I am a Brand
+          </button>
+        </div>
+      </section>
+
+      <!-- upgraded version -->
+      <section class="public-campaigns">
+        <div class="container">
+          <h2 class="section-title">Featured Campaigns</h2>
+          <div id="public-campaign-list" class="campaign-grid"></div>
+        </div>
+        <div
+          id="view-all-container"
+          style="text-align: center; margin-top: 2rem; display: none"
+        >
+          <button id="toggle-campaigns-btn" class="btn btn-secondary">
+            View All Campaigns
+          </button>
+        </div>
+      </section>
+
+      <section class="features-section">
+        <h2 class="features-title">Why Let's Connect?</h2>
+        <div class="card-grid">
+          <div class="stat-card stat-card-centered">
+            <i data-lucide="shield-check" class="feature-icon"></i>
+            <h3>Secure Deals</h3>
+            <p class="feature-text">
+              Verified users and structured workflow for safe collaborations.
+            </p>
+          </div>
+          <div class="stat-card stat-card-centered">
+            <i data-lucide="bar-chart-3" class="feature-icon"></i>
+            <h3>Structured Workflow</h3>
+            <p class="feature-text">
+              End-to-end campaign tracking from proposal to completion.
+            </p>
+          </div>
+          <div class="stat-card stat-card-centered">
+            <i data-lucide="message-square" class="feature-icon"></i>
+            <h3>Direct Messaging</h3>
+            <p class="feature-text">
+              Communicate directly with brands or influencers inside the
+              platform.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="login-view" class="view">
+      <div class="auth-container">
+        <h2 class="auth-title">Welcome Back</h2>
+        <form id="login-form">
+          <div class="form-group">
+            <label>Email Address</label>
+            <input
+              type="email"
+              id="login-email"
+              placeholder="user@connect.com"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="login-password" required />
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">
+            Sign In
+          </button>
+        </form>
+        <p class="auth-footer-text">
+          New here?
+          <a onclick="showView('signup')" class="auth-link">Create account</a>
+        </p>
+      </div>
+    </div>
+
+    <div id="signup-view" class="view">
+      <div class="auth-container">
+        <h2 class="auth-title">Create Account</h2>
+        <form id="signup-form">
+          <div class="form-group">
+            <label>I am a...</label>
+            <select
+              id="role-select"
+              class="input-field"
+              onchange="toggleBrandFields(this.value)"
+            >
+              <option value="influencer">Influencer</option>
+              <option value="brand">Brand</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Full Name</label>
+            <input
+              type="text"
+              id="signup-name"
+              placeholder="Ram"
+              class="input-field"
+              required
+            />
+          </div>
+
+          <div
+            id="brand-fields"
+            style="
+              display: none;
+              border-left: 3px solid #4f46e5;
+              padding-left: 15px;
+              margin-bottom: 1rem;
+            "
+          >
+            <div class="form-group">
+              <label>Company Name</label>
+              <input
+                type="text"
+                id="signup-company"
+                placeholder="e.g. Acme Corp"
+                class="input-field"
+              />
+            </div>
+            <div class="form-group">
+              <label>Company Website</label>
+              <input
+                type="url"
+                id="signup-website"
+                placeholder="https://example.com"
+                class="input-field"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Email Address</label>
+            <input
+              type="email"
+              id="signup-email"
+              class="input-field"
+              placeholder="email@example.com"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              id="signup-password"
+              class="input-field"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">
+            Register Account
+          </button>
+          <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem">
+            Already have an account?
+            <a href="#" onclick="showView('login')">Login here</a>
+          </p>
+        </form>
+      </div>
+    </div>
+
+    <div id="influencer-dashboard-view" class="view">
+      <div class="dashboard-layout">
+        <div class="sidebar">
+          <div
+            class="sidebar-item active"
+            id="side-browse"
+            onclick="switchInfluencerTab('browse')"
+          >
+            <i data-lucide="layout-dashboard"></i> Dashboard
+          </div>
+          <div
+            class="sidebar-item"
+            id="side-applied"
+            onclick="switchInfluencerTab('applied')"
+          >
+            <i data-lucide="clipboard-list"></i> My Applications
+          </div>
+          <div class="sidebar-item" onclick="showView('profile-edit-view')">
+            <i data-lucide="user"></i> My Profile
+          </div>
+        </div>
+        <div class="main-content">
+          <h2 class="welcome-title" id="influencer-welcome">
+            Influencer Console
+          </h2>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <h3>Active Proposals</h3>
+              <div class="value" id="inf-active-count">0</div>
+            </div>
+            <div class="stat-card">
+              <h3>Total Earnings</h3>
+              <div class="value">₹0</div>
+            </div>
+          </div>
+          <div id="inf-browse-section">
+            <div class="section-header"><h3>Recommended Campaigns</h3></div>
+            <div class="card-grid" id="campaign-list"></div>
+          </div>
+          <div id="inf-applied-section" style="display: none">
+            <h3>My Application History</h3>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr class="table-header-row">
+                    <th class="table-cell">Campaign</th>
+                    <th class="table-cell">Budget</th>
+                    <th class="table-cell">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="my-applications-list"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="profile-edit-view" class="view">
+      <div class="dashboard-layout">
+        <div class="sidebar">
+          <div
+            class="sidebar-item"
+            onclick="showView('influencer-dashboard-view')"
+          >
+            <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+          </div>
+        </div>
+        <div class="main-content">
+          <div class="profile-card">
+            <header class="profile-header">
+              <h2>Edit Influencer Profile</h2>
+              <p>Update your professional details to attract more brands.</p>
+            </header>
+            <form id="influencer-profile-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="edit-niche">Niche</label>
+                  <select id="edit-niche" class="form-input">
+                    <option value="Technology">Technology</option>
+                    <option value="Fashion">Fashion</option>
+                    <option value="Lifestyle">Lifestyle</option>
+                    <option value="Travel">Travel</option>
+                    <option value="Food">Food & Dining</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="edit-followers">Follower Count</label>
+                  <input
+                    type="number"
+                    id="edit-followers"
+                    class="form-input"
+                    placeholder="e.g. 15000"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="edit-bio">Professional Bio</label>
+                <textarea
+                  id="edit-bio"
+                  class="form-input"
+                  rows="4"
+                  placeholder="Describe your content style..."
+                ></textarea>
+              </div>
+              <div class="social-links-section">
+                <h3>Social Media Presence</h3>
+                <div class="form-group">
+                  <label for="edit-insta">Instagram Profile URL</label>
+                  <input
+                    type="url"
+                    id="edit-insta"
+                    class="form-input"
+                    placeholder="https://instagram.com/username"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="edit-youtube">YouTube Channel URL</label>
+                  <input
+                    type="url"
+                    id="edit-youtube"
+                    class="form-input"
+                    placeholder="https://youtube.com/c/channelname"
+                  />
+                </div>
+              </div>
+              <div class="form-actions">
+                <button
+                  type="button"
+                  class="btn-save"
+                  onclick="saveInfluencerProfile()"
+                >
+                  Save Profile
+                </button>
+                <button
+                  type="button"
+                  class="btn-cancel"
+                  onclick="showView('influencer-dashboard-view')"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="brand-dashboard-view" class="view">
+      <div class="dashboard-layout">
+        <div class="sidebar">
+          <div class="sidebar-item active">
+            <i data-lucide="bar-chart"></i> My Campaigns
+          </div>
+        </div>
+        <div class="main-content">
+          <div class="content-header">
+            <h2 id="brand-welcome">Brand Console</h2>
+            <button
+              class="btn btn-primary"
+              onclick="
+                document.getElementById('campaign-modal').style.display = 'flex'
+              "
+            >
+              <i data-lucide="plus"></i> New Campaign
+            </button>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr class="table-header-row">
+                  <th class="table-cell">Campaign Name</th>
+                  <th class="table-cell">Budget</th>
+                  <th class="table-cell">Status</th>
+                </tr>
+              </thead>
+              <tbody id="brand-campaign-list"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="admin-dashboard-view" class="view">
+      <div class="dashboard-layout">
+        <div class="sidebar">
+          <div class="sidebar-item active">
+            <i data-lucide="shield-check"></i> Verification
+          </div>
+          <div class="sidebar-item logout-item" onclick="logout()">
+            <i data-lucide="log-out"></i> Logout
+          </div>
+        </div>
+        <div class="main-content">
+          <h2 class="welcome-title">Admin Management</h2>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr class="table-header-row">
+                  <th class="table-cell">Entity</th>
+                  <th class="table-cell">Type</th>
+                  <th class="table-cell">Action</th>
+                </tr>
+              </thead>
+              <tbody id="admin-user-list"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="chat-view" class="view">
+      <div class="dashboard-layout">
+        <div class="sidebar">
+          <div class="sidebar-item active">
+            <i data-lucide="message-square"></i> Chat Room
+          </div>
+          <div class="sidebar-item logout-item" onclick="logout()">
+            <i data-lucide="log-out"></i> Logout
+          </div>
+        </div>
+        <div class="main-content">
+          <div class="dashboard-header">
+            <button
+              class="btn btn-sm btn-outline"
+              onclick="
+                showView(localStorage.getItem('role') + '-dashboard-view')
+              "
+            >
+              ← Back
+            </button>
+            <h2 id="chat-with-title">Campaign Chat</h2>
+          </div>
+          <div id="chat-container">
+            <div id="chat-box"></div>
+            <div class="chat-input-area">
+              <input
+                type="text"
+                id="chat-input"
+                placeholder="Type your message..."
+              />
+              <button class="btn btn-primary" onclick="sendMessage()">
+                <i data-lucide="send"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="apply-modal" class="modal-overlay">
+      <div class="modal">
+        <h3 id="modal-title">Submit Proposal</h3>
+        <div class="form-group modal-form-group">
+          <label>Your Pitch</label
+          ><textarea id="apply-pitch" rows="3"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="submitApplication()">
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="campaign-modal" class="modal-overlay">
+      <div class="modal">
+        <h3>Create New Campaign</h3>
+        <div class="form-group">
+          <label>Title</label><input type="text" id="camp-title" />
+        </div>
+        <div class="form-group">
+          <label>Budget (₹)</label><input type="number" id="camp-budget" />
+        </div>
+        <div class="form-group">
+          <label>Platform</label
+          ><input
+            type="text"
+            id="camp-platform"
+            placeholder="Instagram/YouTube"
+          />
+        </div>
+        <div class="form-group">
+          <label>Description</label><textarea id="camp-desc"></textarea>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="createNewCampaign()">
+          Post Campaign
+        </button>
+        <button
+          class="btn btn-outline btn-full cancel-btn"
+          onclick="
+            document.getElementById('campaign-modal').style.display = 'none'
+          "
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+
+    <div id="toast" class="toast">Success!</div>
+  </body>
+</html>
