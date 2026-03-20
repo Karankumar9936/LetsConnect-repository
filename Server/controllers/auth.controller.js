@@ -108,7 +108,7 @@
 
 const User = require('../models/user');
 const BrandProfile = require('../models/BrandProfile');
-const InfluencerProfile = require('../models/InfluencerProfile'); // Added!
+const InfluencerProfile = require('../models/influencerProfile'); // Added!
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const sequelize = require('../config/db.config'); // Needed for transactions
