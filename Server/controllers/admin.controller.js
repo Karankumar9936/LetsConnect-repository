@@ -1,4 +1,4 @@
-const User = require('../models/User'); // Ensure this path matches your User model
+const User = require('../models/user'); // Ensure this path matches your User model
 const Campaign = require('../models/Campaign');
 
 exports.getAllUsers = async (req, res) => {
