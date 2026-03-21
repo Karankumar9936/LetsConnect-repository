@@ -52,6 +52,21 @@ nav .logo {
     cursor: pointer;
 }
 
+/* New Hamburger Defaults (Hidden on Desktop) */
+.hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    color: var(--text-main);
+}
+
+.nav-menu-wrapper {
+    display: flex;
+    align-items: center;
+}
+
 .nav-links {
     display: flex;
     gap: 1.5rem;
@@ -445,11 +460,273 @@ nav .logo {
     padding: 1rem 2rem; border-radius: 0.5rem; display: none; z-index: 2000;
 }
 
-/* --- 12. RESPONSIVE --- */
+ 
+/* --- 12. RESPONSIVE ( for Mobile Navigation) --- */
 @media (max-width: 768px) {
-    .dashboard-layout { flex-direction: column; }
-    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); }
-    .hero h1 { font-size: 2.5rem; }
+    /* Navigation Adjustments */
+    nav {
+        position: relative;
+        justify-content: space-between;
+        padding: 1rem;
+    }
+    .hamburger {
+        display: block; /* Show hamburger on mobile */
+    }
+    .nav-menu-wrapper {
+        display: none; /* Hidden by default, toggled by JS */
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: var(--white);
+        padding: 1.5rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        border-top: 1px solid var(--border);
+    }
+    .nav-menu-wrapper.active {
+        display: flex; /* Shown when hamburger is clicked */
+    }
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+        gap: 15px;
+        align-items: center;
+    }
+    .nav-links a, .nav-links button {
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+    }
+
+    /* Dashboard Layout Fixes */
+    .dashboard-layout { 
+        flex-direction: column; 
+    }
+    .sidebar { 
+        width: 100%; 
+        border-right: none; 
+        border-bottom: 1px solid var(--border); 
+        flex-direction: row; 
+        overflow-x: auto; /* Allows sidebars to scroll left/right on mobile */
+        white-space: nowrap;
+        padding: 10px;
+    }
+    .sidebar-item {
+        margin-right: 15px;
+        margin-bottom: 0;
+    }
+    .main-content {
+        padding: 1.5rem 1rem; /* Less padding on small screens */
+    }
+
+    /* Grids & Forms */
+    .hero h1 { font-size: 2.2rem; }
     #campaign-list { grid-template-columns: 1fr; }
+    .card-grid { grid-template-columns: 1fr; }
+    .hero-actions { flex-direction: column; gap: 10px; }
+    .hero-actions button { width: 100%; }
+    .form-row { flex-direction: column; gap: 0; }
+    
+    .footer-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 2.5rem;
+    }
+    
+    .footer-brand p {
+        margin: 0 auto; /* Centers the brand paragraph */
+    }
+    
+    .social-icons {
+        justify-content: center;
+    }
+    
+    .site-footer {
+        padding: 3rem 1.5rem 1.5rem;
+    }
+
 }
+
+/* --- 13. FOOTER --- */
+.site-footer {
+    background-color: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 4rem 2rem 1.5rem;
+    margin-top: 4rem; 
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.footer-brand .logo {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    cursor: default;
+}
+
+.footer-brand p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    max-width: 250px;
+    line-height: 1.6;
+}
+
+.footer-links h4, .footer-social h4 {
+    color: var(--text-main);
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    font-size: 1.05rem;
+}
+
+.footer-links a {
+    display: block;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-bottom: 0.75rem;
+    transition: color 0.2s ease;
+    font-size: 0.95rem;
+}
+
+.footer-links a:hover {
+    color: var(--primary);
+}
+
+.social-icons {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-icons a {
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-light);
+}
+
+.social-icons a:hover {
+    color: var(--white);
+    background: var(--primary);
+    transform: translateY(-3px);
+}
+
+.footer-bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+    border-top: 1px solid var(--border);
+    padding-top: 1.5rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+
+
+/* --- MOBILE RESPONSIVE TABLES (Card View Pattern) --- */
+@media (max-width: 500px) {
+    
+    /* 1. Turn the table into a block layout (destroys the rigid grid) */
+    .data-table, 
+    .data-table thead, 
+    .data-table tbody, 
+    .data-table th, 
+    .data-table td, 
+    .data-table tr {
+        display: block;
+        width: 100%;
+    }
+
+    /* 2. Hide the original table headers on top */
+    .data-table thead tr {
+        display: none; 
+    }
+
+    /* 3. Style each row to look like a beautiful standalone card */
+    .data-table tr {
+        margin-bottom: 1.5rem;
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
+        background: var(--white);
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+
+    
+    /* 4. Absolute Positioning Magic: Locks labels left, data right */
+    .table-cell {
+        position: relative;
+        padding: 1rem 1rem 1rem 45%; /* Pushes all your data to the right half of the card */
+        text-align: right; /* Aligns your data neatly on the right */
+        border-bottom: 1px solid var(--border);
+        display: block; /* Removes the flexbox stacking issue */
+        min-height: 3.5rem; /* Ensures the cell doesn't shrink too much */
+    }
+
+    .table-cell:last-child {
+        border-bottom: none;
+    }
+
+    /* 5. Pin the injected Row Names to the absolute Left */
+    .table-cell::before {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        width: 40%;
+        text-align: left;
+        font-weight: 700;
+        color: var(--text-muted);
+    }
+
+    /* --- Inject the Row Names Dynamically --- */
+    #brand-campaign-list td:nth-child(1)::before,
+    #my-applications-list td:nth-child(1)::before { content: "Campaign Name"; }
+    
+    #brand-campaign-list td:nth-child(2)::before,
+    #my-applications-list td:nth-child(2)::before { content: "Budget"; }
+    
+    #brand-campaign-list td:nth-child(3)::before,
+    #my-applications-list td:nth-child(3)::before { content: "Status / Actions"; }
+
+    /* --- Admin Dashboard --- */
+    #admin-user-list td:nth-child(1)::before { content: "Entity Name"; }
+    #admin-user-list td:nth-child(2)::before { content: "User Type"; }
+    #admin-user-list td:nth-child(3)::before { content: "Action"; }
+
+
+    /* 6. Fix internal data alignments for the right side */
+    .campaign-info, .campaign-title-group { text-align: right; }
+    .action-buttons, .status-chat-group { align-items: flex-end; }
+
+
+    /* --- Connect With Us Fix for 368px --- */
+    .footer-social {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Ensures the header and icons stay perfectly centered */
+    }
+
+    .social-icons {
+        gap: 0.75rem; /* Slightly tighter spacing */
+        flex-wrap: wrap; /* CRITICAL: Allows icons to drop to a second row if needed */
+        justify-content: center;
+    }
+
+    .social-icons a {
+        width: 32px;  /* Slightly smaller icons for tiny screens */
+        height: 32px;
+    }
+}
+
+
 

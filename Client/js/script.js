@@ -1,14 +1,11 @@
  // --- 1. CONFIGURATION ---
-// const API_BASE_URL = 'http://localhost:5000/api';
-// const socket = io("http://localhost:5000"); 
-// cloud url
  const API_BASE_URL = 'https://letsconnect-backend-ufyo.onrender.com/api';
 const socket = io('https://letsconnect-backend-ufyo.onrender.com');
 
 let currentCampaignId = null; 
 let activeRoomId = null; 
 
-// --- 2. VIEW MANAGEMENT (Optimized) ---
+// --- 2. VIEW MANAGEMENT ---
 function showView(viewId) {
     // 1. Handle "active" classes for CSS transitions
     document.querySelectorAll('.view').forEach(v => {
@@ -132,7 +129,7 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
 
         const data = await response.json();
 
-        // FIX: Check for response.ok (handles 200, 201, etc.)
+        // Check for response.ok (handles 200, 201, etc.)
         if (response.ok) {
             showToast('Registered! Please login.');
             showView('login');
@@ -151,7 +148,7 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
 
 // --- 5. INFLUENCER DASHBOARD ---
 async function loadInfluencerDashboard() {
-    // Simplified Welcome header
+    
     updateNavUI();
     const welcomeTitle = document.querySelector('#influencer-dashboard-view h2');
     if (welcomeTitle) welcomeTitle.textContent = `WELCOME`;
@@ -231,7 +228,7 @@ async function loadBrandDashboard() {
         }
 
         data.forEach(camp => {
-            // Check if there are any applications for this campaign
+            // Checks if there are any applications for this campaign
             const hasApps = camp.Applications && camp.Applications.length > 0;
 
             if (!hasApps) {
@@ -253,13 +250,20 @@ async function loadBrandDashboard() {
                 // RENDER CAMPAIGN WITH APPLICATIONS
                 camp.Applications.forEach(app => {
                     const statusClass = app.status === 'accepted' ? 'tag-success' : (app.status === 'rejected' ? 'tag-danger' : 'tag-warning');
-                    const influencerId = app.User.user_id || app.User.id;
+                    
+                    // --- SAFE DATA EXTRACTION ---
+                    // This prevents the "Cannot read properties of undefined" crash!
+                    const userData = app.User || app.user || {}; 
+                    const influencerId = userData.user_id || userData.id || '';
+                    const influencerName = userData.name || 'Unknown Influencer';
+                    const influencerEmail = userData.email || 'No email provided';
+                    // ----------------------------------------------
 
                     tableBody.innerHTML += `
                         <tr class="table-row-active">
                             <td class="table-cell">
                                 <strong>${camp.title}</strong><br>
-                                <small>Influencer: ${app.User.name} (${app.User.email})</small>
+                                <small>Influencer: ${influencerName} (${influencerEmail})</small>
                             </td>
                             <td class="table-cell">₹${camp.budget}</td>
                             <td class="table-cell">
@@ -271,7 +275,7 @@ async function loadBrandDashboard() {
                                 ` : `
                                     <div class="status-chat-group">
                                         <span class="tag ${statusClass}">${app.status.toUpperCase()}</span>
-                                        ${app.status === 'accepted' ? `
+                                        ${app.status === 'accepted' && influencerId ? `
                                             <button class="btn btn-sm btn-primary chat-btn" onclick="startChat(${camp.campaign_id}, '${camp.title.replace(/'/g, "\\'")}', ${influencerId})">
                                                 <i data-lucide="message-circle"></i> Chat
                                             </button>` : ''}
@@ -283,7 +287,7 @@ async function loadBrandDashboard() {
             }
         });
 
-        // Re-render icons if you are using Lucide
+         
         if (window.lucide) lucide.createIcons();
 
     } catch (err) {
@@ -291,6 +295,10 @@ async function loadBrandDashboard() {
         showToast("Error loading brand console");
     }
 }
+
+
+
+
 
 async function updateStatus(appId, newStatus) {
     const token = localStorage.getItem('token');
@@ -381,23 +389,8 @@ function appendMessageToUI(senderId, text) {
     chatBox.appendChild(msgDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
-
-// --- 8. ADMIN DASHBOARD ---
-// async function loadAdminDashboard() {
-//     const token = localStorage.getItem('token');
-//     try {
-//         const res = await fetch(`${API_BASE_URL}/admin/users`, {
-//             headers: { 'Authorization': `Bearer ${token}` }
-//         });
-//         const users = await res.json();
-//         const userList = document.getElementById('admin-user-list');
-//         userList.innerHTML = '';
-//         users.forEach(user => {
-//             userList.innerHTML += `<tr><td>${user.name}</td><td>${user.role}</td><td><button onclick="deleteUser(${user.user_id})">Remove</button></td></tr>`;
-//         });
-//     } catch (err) { showToast("Admin load failed"); }
-// }
-// upgrade
+ 
+// adminDashboard
 async function loadAdminDashboard() {
     const token = localStorage.getItem('token');
     try {
@@ -409,7 +402,7 @@ async function loadAdminDashboard() {
         userList.innerHTML = '';
 
         users.forEach(user => {
-            // Added classes for styling and better button naming
+            
             userList.innerHTML += `
                 <tr class="table-row">
                     <td class="table-cell"><strong>${user.name}</strong></td>
@@ -422,7 +415,6 @@ async function loadAdminDashboard() {
                 </tr>`;
         });
         
-        // Refresh icons if you are using Lucide
         if (window.lucide) lucide.createIcons(); 
 
     } catch (err) { 
@@ -692,10 +684,10 @@ async function handleLogin(e) {
         const data = await response.json();
 
         if (response.ok) {
-            // --- CORE LOGIC ADDED HERE ---
+            // --- CORE LOGIC HERE ---
             localStorage.setItem('token', data.token);
             localStorage.setItem('role', data.user.role);
-            localStorage.setItem('userName', data.user.name); // Store the display name
+            localStorage.setItem('userName', data.user.name); // Stores the display name
             
             showToast(`Welcome back, ${data.user.name}!`);
             
@@ -733,7 +725,7 @@ async function saveInfluencerProfile() {
     const token = localStorage.getItem('token');
     if (!token) return showToast("Please login first.");
 
-    // 1. Collect data from the new Upgraded HTML IDs
+    // 1. Collect data from the HTML IDs
     const profileData = {
         bio: document.getElementById('edit-bio').value,
         niche: document.getElementById('edit-niche').value,
@@ -745,7 +737,7 @@ async function saveInfluencerProfile() {
     };
 
     try {
-        // 2. Start the API call
+        // 2. Starts the API call
         const response = await fetch(`${API_BASE_URL}/profile/influencer/update`, {
             method: 'POST',
             headers: {
@@ -762,7 +754,6 @@ async function saveInfluencerProfile() {
             // 3. Smooth transition back to the dashboard
             showView('influencer-dashboard-view');
             
-            // Optional: Refresh dashboard stats if you have a load function
             if (typeof loadInfluencerDashboard === 'function') {
                 loadInfluencerDashboard();
             }
@@ -833,6 +824,16 @@ function clearCampaignForm() {
     document.getElementById('camp-platform').value = '';
     document.getElementById('camp-desc').value = '';
 }
+
+function toggleMobileMenu() {
+        const wrapper = document.getElementById('nav-wrapper');
+        wrapper.classList.toggle('active');
+      }
+
+function closeMobileMenu() {
+        const wrapper = document.getElementById('nav-wrapper');
+        wrapper.classList.remove('active');
+      }
 
 window.onload = () => {
     updateNavbar();

@@ -11,25 +11,75 @@
   </head>
   <body>
     <nav>
-      <div class="logo" onclick="handleLogoClick()">
+      <div
+        class="logo"
+        onclick="
+          handleLogoClick();
+          closeMobileMenu();
+        "
+      >
         <i data-lucide="zap"></i> Let's Connect
       </div>
 
-      <div class="nav-links" id="guest-nav">
-        <a onclick="showView('landing')">Home</a>
-        <a onclick="showView('login')">Influencers</a>
-        <a onclick="showView('login')">Brands</a>
-        <button class="btn btn-outline" onclick="showView('login')">
-          Login
-        </button>
-        <button class="btn btn-primary" onclick="showView('signup')">
-          Sign Up
-        </button>
-      </div>
+      <button class="hamburger" onclick="toggleMobileMenu()">
+        <i data-lucide="menu"></i>
+      </button>
 
-      <div class="nav-links" id="user-nav" style="display: none">
-        <span id="nav-user-name" class="nav-user-display"></span>
-        <button class="btn btn-outline" onclick="logout()">Logout</button>
+      <div class="nav-menu-wrapper" id="nav-wrapper">
+        <div class="nav-links" id="guest-nav">
+          <a
+            onclick="
+              showView('landing');
+              closeMobileMenu();
+            "
+            >Home</a
+          >
+          <a
+            onclick="
+              showView('login');
+              closeMobileMenu();
+            "
+            >Influencers</a
+          >
+          <a
+            onclick="
+              showView('login');
+              closeMobileMenu();
+            "
+            >Brands</a
+          >
+          <button
+            class="btn btn-outline"
+            onclick="
+              showView('login');
+              closeMobileMenu();
+            "
+          >
+            Login
+          </button>
+          <button
+            class="btn btn-primary"
+            onclick="
+              showView('signup');
+              closeMobileMenu();
+            "
+          >
+            Sign Up
+          </button>
+        </div>
+
+        <div class="nav-links" id="user-nav" style="display: none">
+          <span id="nav-user-name" class="nav-user-display"></span>
+          <button
+            class="btn btn-outline"
+            onclick="
+              logout();
+              closeMobileMenu();
+            "
+          >
+            Logout
+          </button>
+        </div>
       </div>
     </nav>
 
@@ -50,7 +100,6 @@
         </div>
       </section>
 
-      <!-- upgraded version -->
       <section class="public-campaigns">
         <div class="container">
           <h2 class="section-title">Featured Campaigns</h2>
@@ -93,6 +142,44 @@
           </div>
         </div>
       </section>
+      <footer class="site-footer">
+        <div class="footer-container">
+          <div class="footer-brand">
+            <div class="logo"><i data-lucide="zap"></i> Let's Connect</div>
+            <p>
+              Bridging the gap between ambitious brands and authentic creators.
+            </p>
+          </div>
+
+          <div class="footer-links">
+            <h4>Platform</h4>
+            <a href="#" onclick="showView('landing')">Home</a>
+            <a href="#" onclick="showView('login')">Influencers</a>
+            <a href="#" onclick="showView('login')">Brands</a>
+          </div>
+
+          <div class="footer-links">
+            <h4>Legal</h4>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Community Guidelines</a>
+          </div>
+
+          <div class="footer-social">
+            <h4>Connect With Us</h4>
+            <div class="social-icons">
+              <a href="#"><i data-lucide="twitter"></i></a>
+              <a href="#"><i data-lucide="instagram"></i></a>
+              <a href="#"><i data-lucide="linkedin"></i></a>
+              <a href="#"><i data-lucide="mail"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>&copy; 2026 Let's Connect. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
 
     <div id="login-view" class="view">
