@@ -579,7 +579,7 @@ nav .logo {
     line-height: 1.6;
 }
 
-.footer-links h4, .footer-social h4 {
+.footer-links h4, h4 {
     color: var(--text-main);
     font-weight: 700;
     margin-bottom: 1.25rem;
@@ -597,29 +597,6 @@ nav .logo {
 
 .footer-links a:hover {
     color: var(--primary);
-}
-
-.social-icons {
-    display: flex;
-    gap: 1rem;
-}
-
-.social-icons a {
-    color: var(--text-muted);
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--bg-light);
-}
-
-.social-icons a:hover {
-    color: var(--white);
-    background: var(--primary);
-    transform: translateY(-3px);
 }
 
 .footer-bottom {
