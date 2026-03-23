@@ -7,6 +7,9 @@ const { verifyToken } = require('../middleware/auth.middleware');
 // GET all users for the admin list
 router.get('/users', verifyToken, adminController.getAllUsers);
 
+//verify user
+router.put('/verify/:id', verifyToken, adminController.verifyUser);
+
 // DELETE a user
 router.delete('/users/:id', verifyToken, adminController.deleteUser);
 
