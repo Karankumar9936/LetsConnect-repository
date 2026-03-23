@@ -2,6 +2,8 @@
  const API_BASE_URL = 'https://letsconnect-backend-ufyo.onrender.com/api';
 const socket = io('https://letsconnect-backend-ufyo.onrender.com');
 
+
+
 let currentCampaignId = null; 
 let activeRoomId = null; 
 
@@ -298,8 +300,6 @@ async function loadBrandDashboard() {
 
 
 
-
-
 async function updateStatus(appId, newStatus) {
     const token = localStorage.getItem('token');
     try {
@@ -402,12 +402,36 @@ async function loadAdminDashboard() {
         userList.innerHTML = '';
 
         users.forEach(user => {
+            // Safely check if the user is verified (handles both 1/0 and true/false)
+            const isVerified = user.is_verified === 1 || user.is_verified === true;
             
+            // Create a text badge for their status
+            const statusBadge = isVerified 
+                ? `<span style="color: #10b981; font-size: 0.85rem; font-weight: bold;">Verified ✓</span>` 
+                : `<span style="color: #f59e0b; font-size: 0.85rem; font-weight: bold;">Pending</span>`;
+
+            // Create the verify button (Active if pending, disabled if already verified)
+            const verifyBtn = !isVerified 
+                ? `<button class="btn-accept" style="background-color: #10b981; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-right: 8px;" onclick="verifyUser(${user.user_id})">
+                       <i data-lucide="check-circle"></i> Verify
+                   </button>` 
+                : `<button disabled style="background-color: #e5e7eb; color: #9ca3af; border: none; padding: 5px 10px; border-radius: 4px; cursor: not-allowed; margin-right: 8px;">
+                       <i data-lucide="check-circle"></i> Verified
+                   </button>`;
+
+            // Append to the table
             userList.innerHTML += `
                 <tr class="table-row">
-                    <td class="table-cell"><strong>${user.name}</strong></td>
-                    <td class="table-cell"><span class="role-badge">${user.role}</span></td>
                     <td class="table-cell">
+                        <strong>${user.name}</strong><br>
+                        <small style="color: #6b7280;">${user.email || ''}</small>
+                    </td>
+                    <td class="table-cell">
+                        <span class="role-badge">${user.role}</span><br>
+                        ${statusBadge}
+                    </td>
+                    <td class="table-cell">
+                        ${verifyBtn}
                         <button class="btn-reject" onclick="deleteUser(${user.user_id})">
                             <i data-lucide="trash-2"></i> Remove
                         </button>
@@ -415,6 +439,7 @@ async function loadAdminDashboard() {
                 </tr>`;
         });
         
+        // Refresh icons if you are using Lucide
         if (window.lucide) lucide.createIcons(); 
 
     } catch (err) { 
@@ -422,7 +447,6 @@ async function loadAdminDashboard() {
         console.error(err);
     }
 }
-
 
 // --- 9. UTILITIES ---
 function logout() {
@@ -815,6 +839,36 @@ async function deleteUser(userId) {
     } catch (err) {
         console.error("Delete error:", err);
         showToast("Server error while deleting");
+    }
+}
+
+//18
+async function verifyUser(userId) {
+    // 1. Ask for confirmation
+    if (!confirm("Are you sure you want to verify this user? They will gain full platform access.")) {
+        return;
+    }
+
+    const token = localStorage.getItem('token');
+    try {
+        const res = await fetch(`${API_BASE_URL}/admin/verify/${userId}`, {
+            method: 'PUT',
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (res.ok) {
+            showToast("User verified successfully");
+            loadAdminDashboard(); // Reload the list to show the green "Verified" badge
+        } else {
+            const errorData = await res.json();
+            showToast(errorData.error || errorData.message || "Verification failed");
+        }
+    } catch (err) {
+        console.error("Verify error:", err);
+        showToast("Server error while verifying");
     }
 }
 
